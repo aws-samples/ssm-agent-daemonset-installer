@@ -77,6 +77,7 @@ spec:
       - name: host-mount
         hostPath:
           path: /tmp/install
+      serviceAccount: ssm-agent-installer
       containers:
       - image: "gcr.io/google-containers/pause:2.0"
         name: pause
