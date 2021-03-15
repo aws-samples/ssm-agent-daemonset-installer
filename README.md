@@ -11,7 +11,7 @@ kubectl apply -f setup.yaml
 
 ## Updates
 - 11/5/2020 The daemonset has been updated.  Instead of running indefinitely, the container that runs the scripts to install the SSM agent runs as an init container.  Upon exiting a `pause` container runs. This has a considerably smaller attack surface than the init container.
-- 3/15/2020 Created `setup.yaml` to install the DaemonSet.  The manifest adds a PSP, RBAC Role, and ServiceAccount that the init container uses to run. 
+- 3/15/2020 Created `setup.yaml` to install the DaemonSet.  The manifest adds a PSP, RBAC Role, and ServiceAccount for the init container. 
 
 ## Verify installation
 You can verify that the installation was successful by looking at the logs of a DaemonSet pod.  If the installation was successfull, the last line in the log file will read `Success` otherwise it will read `Fail`.  The nodes will also appears as managed instances in the SSM console if the installation was successful. 
