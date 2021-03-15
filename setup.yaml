@@ -84,7 +84,7 @@ spec:
       hostPID: true
       restartPolicy: Always
       initContainers:
-      - image: jicowan/ssm-agent-installer:1.1
+      - image: jicowan/ssm-agent-installer:1.2
         name: ssm-agent-installer
         securityContext:
           privileged: true
