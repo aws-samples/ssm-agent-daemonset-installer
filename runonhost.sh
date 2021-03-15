@@ -19,7 +19,7 @@ cp /wait.sh /host
 # If the /tmp folder is mounted on the host then it can run the script
 /usr/bin/nsenter -m/proc/1/ns/mnt /tmp/install/install.sh
 
-# Sleep 2 mins, then exit
+# Sleep 30 seconds, then exit
 echo "Waiting for 30 seconds..."
 sleep 30
 echo "Task Completed"
