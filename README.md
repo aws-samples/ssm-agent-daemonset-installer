@@ -4,17 +4,14 @@ This project shows how you can install the SSM agent onto EKS worker nodes using
 
 ## Installation instructions
 1. Add the `AmazonSSMManagedInstanceCore` policy the the EC2 Instance Profile of the Managed Worker Nodes. 
-2. Apply the ConfigMap:
+2. Apply the manifest:
 ```
-kubectl apply -f configmap.yaml
-```
-3. Apply the DaemonSet: 
-```
-kubectl apply -f daemonset.yaml
+kubectl apply -f setup.yaml
 ```
 
 ## Updates
-- 11/5/2020 The daemonset has been updated.  Instead of running indefinitely, the container that runs the scripts to install the SSM agent runs as an init container.  Upon exiting a `pause` container runs. This has a considerably smaller attack surface than the init container.   
+- 11/5/2020 The daemonset has been updated.  Instead of running indefinitely, the container that runs the scripts to install the SSM agent runs as an init container.  Upon exiting a `pause` container runs. This has a considerably smaller attack surface than the init container.
+- 3/15/2020 Created `setup.yaml` to install the DaemonSet.  The manifest adds a PSP, RBAC Role, and ServiceAccount that the init container uses to run. 
 
 ## Verify installation
 You can verify that the installation was successful by looking at the logs of a DaemonSet pod.  If the installation was successfull, the last line in the log file will read `Success` otherwise it will read `Fail`.  The nodes will also appears as managed instances in the SSM console if the installation was successful. 
