@@ -14,6 +14,12 @@ rules:
   resourceNames:
   - ssm-agent-installer
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ssm-agent-installer
+  namespace: node-configuration-daemonset
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -43,6 +49,23 @@ spec:
     rule: RunAsAny
   fsGroup:
     rule: RunAsAny
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ssm-installer-script
+  namespace: node-configuration-daemonset
+data:
+  install.sh: |
+    #!/bin/bash
+    # Update and install packages
+    sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+    STATUS=$(sudo systemctl status amazon-ssm-agent)
+    if echo $STATUS | grep -q "running"; then
+        echo "Success"
+    else
+        echo "Fail" >&2 
+    fi
 ---
 apiVersion: apps/v1
 kind: DaemonSet
