@@ -59,6 +59,14 @@ data:
   install.sh: |
     #!/bin/bash
     # Update and install packages
+    arch=$(uname -i)
+    if [[ $arch == arm* ]]; then
+      sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_arm64/amazon-ssm-agent.rpm
+    elif [[ $arch == x86_64* ]]; then 
+      sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+    elif [[ $arch == i*86 ]]; then
+      sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_386/amazon-ssm-agent.rpm
+    fi
     sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
     STATUS=$(sudo systemctl status amazon-ssm-agent)
     if echo $STATUS | grep -q "running"; then
