@@ -8,11 +8,11 @@ kind: ClusterRole
 metadata:
   name: ssm-agent-installer
 rules:
-- apiGroups: ['policy']
-  resources: ['podsecuritypolicies']
-  verbs:     ['use']
-  resourceNames:
-  - ssm-agent-installer
+  - apiGroups: ['policy']
+    resources: ['podsecuritypolicies']
+    verbs: ['use']
+    resourceNames:
+      - ssm-agent-installer
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -24,15 +24,15 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: ssm-agent-installer
-  namespace: node-configuration-daemonset 
+  namespace: node-configuration-daemonset
 roleRef:
   kind: ClusterRole
   name: ssm-agent-installer
   apiGroup: rbac.authorization.k8s.io
 subjects:
-- kind: ServiceAccount
-  name: ssm-agent-installer 
-  namespace: node-configuration-daemonset
+  - kind: ServiceAccount
+    name: ssm-agent-installer
+    namespace: node-configuration-daemonset
 ---
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
@@ -40,7 +40,7 @@ metadata:
   name: ssm-agent-installer
 spec:
   privileged: true
-  hostPID: true 
+  hostPID: true
   seLinux:
     rule: RunAsAny
   supplementalGroups:
@@ -60,14 +60,14 @@ data:
     #!/bin/bash
     # Update and install packages
     arch=$(uname -i)
-    if [[ $arch == arm* ]]; then
+    echo "working on $arch"
+    if [[ $arch == aarch64* ]]; then
       sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_arm64/amazon-ssm-agent.rpm
     elif [[ $arch == x86_64* ]]; then 
       sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
     elif [[ $arch == i*86 ]]; then
       sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_386/amazon-ssm-agent.rpm
     fi
-    sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
     STATUS=$(sudo systemctl status amazon-ssm-agent)
     if echo $STATUS | grep -q "running"; then
         echo "Success"
@@ -92,27 +92,27 @@ spec:
       hostPID: true
       restartPolicy: Always
       initContainers:
-      - image: jicowan/ssm-agent-installer:1.3
-        name: ssm-agent-installer
-        securityContext:
-          privileged: true
-        volumeMounts:
-        - name: install-script
-          mountPath: /tmp
-        - name: host-mount
-          mountPath: /host
+        - image: jicowan/ssm-agent-installer:1.3
+          name: ssm-agent-installer
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: install-script
+              mountPath: /tmp
+            - name: host-mount
+              mountPath: /host
       volumes:
-      - name: install-script
-        configMap:
-          name: ssm-installer-script
-      - name: host-mount
-        hostPath:
-          path: /tmp/install
+        - name: install-script
+          configMap:
+            name: ssm-installer-script
+        - name: host-mount
+          hostPath:
+            path: /tmp/install
       serviceAccount: ssm-agent-installer
       containers:
-      - image: "gcr.io/google-containers/pause:2.0"
-        name: pause
-        securityContext:  
-          allowPrivilegeEscalation: false  
-          runAsUser: 1000  
-          readOnlyRootFilesystem: true
+        - image: 'gcr.io/google-containers/pause:3.2'
+          name: pause
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 1000
+            readOnlyRootFilesystem: true
