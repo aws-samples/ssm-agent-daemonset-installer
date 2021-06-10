@@ -14,26 +14,26 @@ spec:
       hostPID: true
       restartPolicy: Always
       initContainers:
-      - image: public.ecr.aws/q2t9z9u5/ssm-agent-installer:1.2
-        name: ssm-agent-installer
-        securityContext:
-          privileged: true
-        volumeMounts:
-        - name: install-script
-          mountPath: /tmp
-        - name: host-mount
-          mountPath: /host
+        - image: public.ecr.aws/q2t9z9u5/ssm-agent-installer:1.2
+          name: ssm-agent-installer
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: install-script
+              mountPath: /tmp
+            - name: host-mount
+              mountPath: /host
       volumes:
-      - name: install-script
-        configMap:
-          name: ssm-installer-script
-      - name: host-mount
-        hostPath:
-          path: /tmp/install
+        - name: install-script
+          configMap:
+            name: ssm-installer-script
+        - name: host-mount
+          hostPath:
+            path: /tmp/install
       containers:
-      - image: "gcr.io/google-containers/pause:2.0"
-        name: pause
-        securityContext:  
-          allowPrivilegeEscalation: false  
-          runAsUser: 1000  
-          readOnlyRootFilesystem: true
+        - image: 'gcr.io/google-containers/pause:3.2'
+          name: pause
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 1000
+            readOnlyRootFilesystem: true
