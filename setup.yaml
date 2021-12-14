@@ -101,6 +101,8 @@ spec:
         hostPath:
           path: /tmp/install
       serviceAccount: ssm-agent-installer
+      tolerations:
+      - operator: Exists
       containers:
       - image: "gcr.io/google-containers/pause:2.0"
         name: pause
